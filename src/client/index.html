@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-    <div id="app">
+    <div id="app" :class="weatherClass">
         <h1>3-Day Weather Forecast</h1>
         <input v-model="city" placeholder="Enter a city" @keyup.enter="fetchWeather">
         <button @click="fetchWeather">Get Weather</button>

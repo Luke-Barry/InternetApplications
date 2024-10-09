@@ -6,18 +6,13 @@ new Vue({
         forecast: null,
         errorMessage: '',
         umbrellaAdvice: false,
-        weatherType: '',
+        weatherType: '',  // 'Cold', 'Mild', or 'Hot' based on temperature
         map: null,
         marker: null,
         showMap: false
     },
-    created() {
-        console.log("Vue instance initialized.");
-    },
     methods: {
         async fetchWeather() {
-            console.log("fetchWeather called with city:", this.city);
-
             if (!this.city) {
                 this.errorMessage = 'Please enter a city name.';
                 return;
@@ -30,12 +25,7 @@ new Vue({
                 if (!response.ok) throw new Error("Failed to fetch weather data");
 
                 const data = await response.json();
-                console.log("Response data:", data);
-
-                // Process forecast data
                 this.processWeatherData(data.forecast);
-
-                // Set showMap to true to render the map container, then update map
                 this.showMap = true;
                 setTimeout(() => this.updateMap(data.coord.lat, data.coord.lon), 0);
 
@@ -47,16 +37,12 @@ new Vue({
         },
         processWeatherData(forecastData) {
             this.forecast = forecastData;
-
-            // Set umbrella advice if any day has rain > 0
             this.umbrellaAdvice = this.forecast.some(day => day.rain > 0);
 
-            // Determine weather type based on average temperature
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
             this.weatherType = avgTemp < 8 ? 'Cold' : avgTemp <= 24 ? 'Mild' : 'Hot';
         },
         updateMap(lat, lon) {
-            // Ensure the map is initialized only once
             if (!this.map) {
                 this.map = L.map('map').setView([lat, lon], 10);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -65,15 +51,27 @@ new Vue({
                 }).addTo(this.map);
             }
 
-            // Update marker position or create a new one
             if (this.marker) {
                 this.marker.setLatLng([lat, lon]);
             } else {
                 this.marker = L.marker([lat, lon]).addTo(this.map);
             }
 
-            // Center the map on the new coordinates
             this.map.setView([lat, lon], 10);
+        }
+    },
+    computed: {
+        weatherClass() {
+            switch (this.weatherType) {
+                case 'Cold':
+                    return 'cold-weather';
+                case 'Mild':
+                    return 'mild-weather';
+                case 'Hot':
+                    return 'hot-weather';
+                default:
+                    return '';
+            }
         }
     }
 });
