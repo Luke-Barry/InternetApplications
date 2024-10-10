@@ -37,7 +37,14 @@ new Vue({
         },
         processWeatherData(forecastData) {
             this.forecast = forecastData;
-            this.umbrellaAdvice = this.forecast.some(day => day.rain > 0);
+            const isRaining = this.forecast.some(day => day.rain > 0);
+
+            if (isRaining) {
+                this.umbrellaAdvice = true;
+            } else {
+                this.umbrellaAdvice = false;
+                this.clearRainEffect();
+            }
 
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
             this.weatherType = avgTemp < 8 ? 'Cold' : avgTemp <= 24 ? 'Mild' : 'Hot';
@@ -45,25 +52,21 @@ new Vue({
         initializeRainEffect() {
             particlesJS('particles-js', {
                 particles: {
-                    number: { value: 1000, density: { enable: true, value_area: 250 } },  // Increased density for thicker rain
-                    color: { value: '#0099ff' },        // Blue color for raindrop look
-                    shape: { type: 'circle' },          // Circle shape for raindrops
-                    opacity: {
-                        value: 2,                    // Lower opacity for visibility against background
-                        random: true
-                    },
+                    number: { value: 400, density: { enable: true, value_area: 800 } },
+                    color: { value: '#0099ff' },
+                    shape: { type: 'circle' },
                     size: {
-                        value: 2,                      // Smaller size to create a finer raindrop effect
+                        value: 3,
                         random: true
                     },
                     move: {
-                        direction: 'bottom',           // Falling direction
-                        speed: 12,                     // Faster speed to simulate rain
-                        straight: false,               // Set to false to allow angular movement
-                        random: true,                  // Enables slight horizontal drift to mimic wind
-                        out_mode: 'out'                // Exit out of the canvas bottom
+                        direction: 'bottom',
+                        speed: 10,
+                        straight: false,
+                        random: true,
+                        out_mode: 'out'
                     },
-                    line_linked: {                     // Disable lines between particles
+                    line_linked: {
                         enable: false
                     }
                 },
@@ -76,6 +79,12 @@ new Vue({
                 },
                 retina_detect: true
             });
+        },
+        clearRainEffect() {
+            const particlesCanvas = document.querySelector('#particles-js canvas');
+            if (particlesCanvas) {
+                particlesCanvas.remove();
+            }
         },
         updateMap(lat, lon) {
             if (!this.map) {
@@ -99,6 +108,8 @@ new Vue({
         umbrellaAdvice(newVal) {
             if (newVal) {
                 this.initializeRainEffect();
+            } else {
+                this.clearRainEffect();
             }
         }
     },
