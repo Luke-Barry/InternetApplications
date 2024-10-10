@@ -7,10 +7,14 @@
     <title>Weather App with Map</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
 <body>
+    <!-- Particles.js container for rain effect -->
+    <div id="particles-js" v-if="umbrellaAdvice"></div>
+
     <div id="app" :class="weatherClass">
-        <h1>3-Day Weather Forecast</h1>
+        <h1>3-Day Weather Forecast For {{ city }} </h1>
         <input v-model="city" placeholder="Enter a city" @keyup.enter="fetchWeather">
         <button @click="fetchWeather">Get Weather</button>
 
@@ -19,8 +23,6 @@
         <div class="content">
             <!-- Weather Information -->
             <div v-if="forecast">
-                <h2>Forecast for {{ city }}</h2>
-                <div v-if="umbrellaAdvice">Bring an umbrella!</div>
                 <div>Weather Type: {{ weatherType }}</div>
 
                 <!-- 3-Day Forecast Table -->

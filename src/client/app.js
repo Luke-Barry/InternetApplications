@@ -6,7 +6,7 @@ new Vue({
         forecast: null,
         errorMessage: '',
         umbrellaAdvice: false,
-        weatherType: '',  // 'Cold', 'Mild', or 'Hot' based on temperature
+        weatherType: '',
         map: null,
         marker: null,
         showMap: false
@@ -42,6 +42,41 @@ new Vue({
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
             this.weatherType = avgTemp < 8 ? 'Cold' : avgTemp <= 24 ? 'Mild' : 'Hot';
         },
+        initializeRainEffect() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 1000, density: { enable: true, value_area: 250 } },  // Increased density for thicker rain
+                    color: { value: '#0099ff' },        // Blue color for raindrop look
+                    shape: { type: 'circle' },          // Circle shape for raindrops
+                    opacity: {
+                        value: 2,                    // Lower opacity for visibility against background
+                        random: true
+                    },
+                    size: {
+                        value: 2,                      // Smaller size to create a finer raindrop effect
+                        random: true
+                    },
+                    move: {
+                        direction: 'bottom',           // Falling direction
+                        speed: 12,                     // Faster speed to simulate rain
+                        straight: false,               // Set to false to allow angular movement
+                        random: true,                  // Enables slight horizontal drift to mimic wind
+                        out_mode: 'out'                // Exit out of the canvas bottom
+                    },
+                    line_linked: {                     // Disable lines between particles
+                        enable: false
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: { enable: false },
+                        onclick: { enable: false }
+                    }
+                },
+                retina_detect: true
+            });
+        },
         updateMap(lat, lon) {
             if (!this.map) {
                 this.map = L.map('map').setView([lat, lon], 10);
@@ -58,6 +93,13 @@ new Vue({
             }
 
             this.map.setView([lat, lon], 10);
+        }
+    },
+    watch: {
+        umbrellaAdvice(newVal) {
+            if (newVal) {
+                this.initializeRainEffect();
+            }
         }
     },
     computed: {
