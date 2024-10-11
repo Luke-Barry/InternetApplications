@@ -7,6 +7,7 @@ new Vue({
         errorMessage: '',
         umbrellaAdvice: false,
         weatherType: '',
+        packingAdvice: '',  // New property for combined packing advice
         map: null,
         marker: null,
         showMap: false
@@ -38,16 +39,31 @@ new Vue({
         processWeatherData(forecastData) {
             this.forecast = forecastData;
             const isRaining = this.forecast.some(day => day.rain > 0);
+            const recommendations = [];  // Array to hold packing items based on conditions
 
             if (isRaining) {
                 this.umbrellaAdvice = true;
+                recommendations.push("an umbrella");  // Recommend umbrella for rainy weather
             } else {
                 this.umbrellaAdvice = false;
                 this.clearRainEffect();
             }
 
+            // Determine temperature-based recommendations
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
-            this.weatherType = avgTemp < 8 ? 'Cold' : avgTemp <= 24 ? 'Mild' : 'Hot';
+            if (avgTemp < 8) {
+                this.weatherType = 'Cold';
+                recommendations.push("warm pants, jackets, hat, gloves and scarf");  // Cold weather items
+            } else if (avgTemp <= 24) {
+                this.weatherType = 'Mild';
+                recommendations.push("shorts, t-shirts and hoodies");
+            } else {
+                this.weatherType = 'Hot';
+                recommendations.push("swimming shorts, suncream, and light clothing");  // Hot weather items
+            }
+
+            // Combine all recommendations into a single packing advice string
+            this.packingAdvice = "Don't forget to pack: " + recommendations.join(", ") + ".";
         },
         initializeRainEffect() {
             particlesJS('particles-js', {
@@ -61,7 +77,7 @@ new Vue({
                     },
                     move: {
                         direction: 'bottom',
-                        speed: 10,
+                        speed: 15,
                         straight: false,
                         random: true,
                         out_mode: 'out'
