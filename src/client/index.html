@@ -10,7 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
 <body>
-    <!-- Particles.js container for rain effect -->
     <div id="particles-js" v-if="umbrellaAdvice"></div>
 
     <div id="app" :class="weatherClass">
@@ -20,15 +19,10 @@
 
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-        <div class="content">
-            <!-- Weather Information -->
-            <div v-if="forecast">
-                <div>Weather Type: {{ weatherType }}</div>
-
-                <!-- Packing Advice -->
-                <div class="packing-advice">{{ packingAdvice }}</div>
-
-                <!-- 3-Day Forecast Table -->
+        <div class="grid-container">
+            <!-- Weather Information (Top Left) -->
+            <div v-if="forecast" class="weather-info grid-item">
+                <h2>Weather Forecast</h2>
                 <table>
                     <tr>
                         <th>Date</th>
@@ -45,8 +39,25 @@
                 </table>
             </div>
 
-            <!-- Map Container -->
-            <div id="map" v-if="showMap"></div>
+            <!-- Packing Recommendations (Top Right) -->
+            <div class="packing-advice grid-item">
+                <h2>Packing Recommendations</h2>
+                <p>{{ packingAdvice }}</p>
+            </div>
+
+            <!-- Map (Bottom Left) -->
+            <div id="map" class="map-container grid-item" v-if="showMap"></div>
+
+            <!-- Air Quality (Bottom Right) -->
+            <div v-if="airQuality" class="air-quality grid-item">
+                <h2>Air Quality</h2>
+                <p>PM2.5: {{ airQuality.pm2_5 }} µg/m³</p>
+                <p>PM10: {{ airQuality.pm10 }} µg/m³</p>
+                <p>NO₂: {{ airQuality.no2 }} µg/m³</p>
+                <p>SO₂: {{ airQuality.so2 }} µg/m³</p>
+                <p>O₃: {{ airQuality.o3 }} µg/m³</p>
+                <p class="air-quality-advice">{{ airQualityAdvice }}</p>
+            </div>
         </div>
     </div>
 

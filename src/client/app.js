@@ -7,7 +7,9 @@ new Vue({
         errorMessage: '',
         umbrellaAdvice: false,
         weatherType: '',
-        packingAdvice: '',  // New property for combined packing advice
+        packingAdvice: '',
+        airQuality: null,             // Stores air quality data
+        airQualityAdvice: '',         // Stores air quality recommendations
         map: null,
         marker: null,
         showMap: false
@@ -31,39 +33,66 @@ new Vue({
                 setTimeout(() => this.updateMap(data.coord.lat, data.coord.lon), 0);
 
                 this.errorMessage = '';
+                await this.fetchAirQuality(data.coord.lat, data.coord.lon); // Fetch air quality data
             } catch (error) {
                 console.error("Fetch error:", error);
                 this.errorMessage = 'Could not fetch weather data.';
             }
         },
+        async fetchAirQuality(lat, lon) {
+            const apiUrl = `http://localhost:3000/api/air_quality?lat=${lat}&lon=${lon}`;
+        
+            try {
+                const response = await fetch(apiUrl, { method: 'GET' });
+                if (!response.ok) throw new Error("Failed to fetch air quality data");
+        
+                const data = await response.json();
+                console.log('Air Quality Data:', data);  // Add this line to check data structure
+                this.airQuality = data; // Store air quality metrics directly
+                this.generateAirQualityAdvice(); // Generate advice based on air quality
+            } catch (error) {
+                console.error("Air Quality fetch error:", error);
+                this.airQualityAdvice = 'Air quality data unavailable.';
+            }
+        },
+        generateAirQualityAdvice() {
+            const { pm2_5, pm10, no2, so2, o3 } = this.airQuality;
+            let advice = [];
+
+            if (pm2_5 > 35) advice.push("High PM2.5 levels: limit outdoor activities.");
+            if (pm10 > 50) advice.push("High PM10 levels: avoid outdoor activities for sensitive groups.");
+            if (no2 > 100) advice.push("High NO₂ levels: limit physical activities outside.");
+            if (so2 > 20) advice.push("High SO₂ levels: limit exposure if you have respiratory issues.");
+            if (o3 > 180) advice.push("High ozone levels: avoid prolonged sun exposure.");
+
+            this.airQualityAdvice = advice.length ? advice.join(" ") : "Air quality is good. No precautions necessary.";
+        },
         processWeatherData(forecastData) {
             this.forecast = forecastData;
             const isRaining = this.forecast.some(day => day.rain > 0);
-            const recommendations = [];  // Array to hold packing items based on conditions
+            const recommendations = [];
 
             if (isRaining) {
                 this.umbrellaAdvice = true;
-                recommendations.push("an umbrella");  // Recommend umbrella for rainy weather
+                recommendations.push("an umbrella");
             } else {
                 this.umbrellaAdvice = false;
                 this.clearRainEffect();
             }
 
-            // Determine temperature-based recommendations
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
             if (avgTemp < 8) {
                 this.weatherType = 'Cold';
-                recommendations.push("warm pants, jackets, hat, gloves and scarf");  // Cold weather items
+                recommendations.push("a hat and gloves");
             } else if (avgTemp <= 24) {
                 this.weatherType = 'Mild';
-                recommendations.push("shorts, t-shirts and hoodies");
+                recommendations.push("comfortable clothing for mild weather");
             } else {
                 this.weatherType = 'Hot';
-                recommendations.push("swimming shorts, suncream, and light clothing");  // Hot weather items
+                recommendations.push("swimming shorts, suncream, and light clothing");
             }
 
-            // Combine all recommendations into a single packing advice string
-            this.packingAdvice = "Don't forget to pack: " + recommendations.join(", ") + ".";
+            this.packingAdvice = "Pack " + recommendations.join(", ") + ".";
         },
         initializeRainEffect() {
             particlesJS('particles-js', {
