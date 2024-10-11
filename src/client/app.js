@@ -8,8 +8,8 @@ new Vue({
         umbrellaAdvice: false,
         weatherType: '',
         packingAdvice: '',
-        airQuality: null,             // Stores air quality data
-        airQualityAdvice: '',         // Stores air quality recommendations
+        airQuality: null,
+        airQualityAdvice: '',
         map: null,
         marker: null,
         showMap: false
@@ -33,7 +33,7 @@ new Vue({
                 setTimeout(() => this.updateMap(data.coord.lat, data.coord.lon), 0);
 
                 this.errorMessage = '';
-                await this.fetchAirQuality(data.coord.lat, data.coord.lon); // Fetch air quality data
+                await this.fetchAirQuality(data.coord.lat, data.coord.lon);
             } catch (error) {
                 console.error("Fetch error:", error);
                 this.errorMessage = 'Could not fetch weather data.';
@@ -41,15 +41,14 @@ new Vue({
         },
         async fetchAirQuality(lat, lon) {
             const apiUrl = `http://localhost:3000/api/air_quality?lat=${lat}&lon=${lon}`;
-        
+
             try {
                 const response = await fetch(apiUrl, { method: 'GET' });
                 if (!response.ok) throw new Error("Failed to fetch air quality data");
-        
+
                 const data = await response.json();
-                console.log('Air Quality Data:', data);  // Add this line to check data structure
-                this.airQuality = data; // Store air quality metrics directly
-                this.generateAirQualityAdvice(); // Generate advice based on air quality
+                this.airQuality = data;
+                this.generateAirQualityAdvice();
             } catch (error) {
                 console.error("Air Quality fetch error:", error);
                 this.airQualityAdvice = 'Air quality data unavailable.';
@@ -97,7 +96,7 @@ new Vue({
         initializeRainEffect() {
             particlesJS('particles-js', {
                 particles: {
-                    number: { value: 400, density: { enable: true, value_area: 800 } },
+                    number: { value: 300, density: { enable: true, value_area: 800 } },
                     color: { value: '#0099ff' },
                     shape: { type: 'circle' },
                     size: {
@@ -106,7 +105,7 @@ new Vue({
                     },
                     move: {
                         direction: 'bottom',
-                        speed: 15,
+                        speed: 10,
                         straight: false,
                         random: true,
                         out_mode: 'out'
@@ -133,11 +132,21 @@ new Vue({
         },
         updateMap(lat, lon) {
             if (!this.map) {
-                this.map = L.map('map').setView([lat, lon], 10);
+                this.map = L.map('map', {
+                    center: [lat, lon],
+                    zoom: 10,
+                    maxBoundsViscosity: 1.0,
+                });
+
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '&copy; OpenStreetMap contributors'
                 }).addTo(this.map);
+
+                // Bind map container dimensions
+                window.addEventListener('resize', () => {
+                    this.map.invalidateSize();
+                });
             }
 
             if (this.marker) {
@@ -147,6 +156,7 @@ new Vue({
             }
 
             this.map.setView([lat, lon], 10);
+            this.map.invalidateSize();
         }
     },
     watch: {
