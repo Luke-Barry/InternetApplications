@@ -51,6 +51,7 @@
             <!-- Air Quality (Bottom Right) -->
             <div v-if="airQuality" class="air-quality grid-item">
                 <h2>Air Quality</h2>
+                <p>CO: {{ airQuality.co }} µg/m³ </p>
                 <p>PM2.5: {{ airQuality.pm2_5 }} µg/m³</p>
                 <p>PM10: {{ airQuality.pm10 }} µg/m³</p>
                 <p>NO₂: {{ airQuality.no2 }} µg/m³</p>

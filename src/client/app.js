@@ -55,9 +55,10 @@ new Vue({
             }
         },
         generateAirQualityAdvice() {
-            const { pm2_5, pm10, no2, so2, o3 } = this.airQuality;
+            const { co, pm2_5, pm10, no2, so2, o3 } = this.airQuality;
             let advice = [];
 
+            if (co > 1000) advice.push("Elevated CO levels: avoid poorly ventilated areas.");
             if (pm2_5 > 35) advice.push("High PM2.5 levels: limit outdoor activities.");
             if (pm10 > 50) advice.push("High PM10 levels: avoid outdoor activities for sensitive groups.");
             if (no2 > 100) advice.push("High NO₂ levels: limit physical activities outside.");
