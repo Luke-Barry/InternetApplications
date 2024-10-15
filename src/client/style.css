@@ -23,6 +23,29 @@ html, body {
     z-index: 1;
 }
 
+.spiral-background {
+    background: conic-gradient(from 90deg, #4a90e2, #ffe29f, #ff7e5f, #4a90e2);
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -10; /* Ensures it’s behind the main content */
+}
+
+#app {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    transition: background 0.5s ease;
+    z-index: 2; /* Ensure #app is in front of background */
+}
+
 .search-container {
     position: relative;
     display: flex;
@@ -34,6 +57,7 @@ html, body {
     border-radius: 5px;
     padding: 0;
     background-color: white;
+    z-index: 3; /* Ensure it's above the background */
 }
 
 .search-icon {
@@ -55,18 +79,7 @@ input {
     font-family: 'Roboto', sans-serif;
     box-sizing: border-box;
     background-color: transparent; /* Blend with container background */
-}
-
-#app {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    height: 100vh;
-    text-align: center;
-    transition: background 0.5s ease;
+    z-index: 3; /* Ensure input is clickable */
 }
 
 /* Weather-based Background Colors */
@@ -111,6 +124,7 @@ input {
         "weather packing"
         "map air-quality";
     box-sizing: border-box;
+    z-index: 2; /* Ensure grid-container is above background */
 }
 
 /* Grid Items */
@@ -123,6 +137,7 @@ input {
     justify-content: center;
     box-sizing: border-box;
     transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth scaling transition */
+    z-index: 2; /* Ensure each grid item is above background */
 }
 
 /* Hover effect for grid items */
@@ -174,6 +189,7 @@ input {
     transition: background-color 0.3s ease, transform 0.2s ease;
     border-radius: 5px;
     font-weight: bold;
+    z-index: 3; /* Ensure button is above the background */
 }
 
 .dynamic-button:hover {

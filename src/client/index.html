@@ -7,33 +7,33 @@
     <title>Weather App with Map</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-    <div id="particles-js" v-if="umbrellaAdvice"></div>
+    <div id="app" :class="[weatherClass, showLandingBackground ? 'spiral-background' : '']">
+        <!-- Particle effect only visible during rain/snow -->
+        <div id="particles-js" v-if="umbrellaAdvice"></div>
 
-    <div id="app" :class="weatherClass">
+        <!-- App Header and Search Bar -->
         <h1>{{ title }}</h1>
         <div class="search-container">
-            <i class="fas fa-search search-icon"></i> <!-- Font Awesome Icon -->
+            <i class="fas fa-search search-icon"></i>
             <input v-model="city" placeholder="Enter your desired city" @keyup.enter="fetchWeather">
         </div>              
         <button @click="fetchWeather" :class="[weatherClass || 'default-button', 'dynamic-button']">Get Weather</button>
 
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
+        <!-- Grid Layout for Weather Info, Packing Advice, Map, and Air Quality -->
         <div class="grid-container">
-            <!-- Weather Information (Top Left) -->
-            <div v-if="forecast" class="weather-info grid-item">
+            <!-- Weather Information -->
+            <div class="weather-info grid-item">
                 <h2>Weather Forecast</h2>
                 <table>
-                    <tr>
-                        <th>Date</th>
-                        <th>Temp (°C)</th>
-                        <th>Wind Speed (m/s)</th>
-                        <th>Rainfall (mm)</th>
-                    </tr>
+                    <tr><th>Date</th><th>Temp (°C)</th><th>Wind Speed (m/s)</th><th>Rainfall (mm)</th></tr>
                     <tr v-for="day in forecast" :key="day.date">
                         <td>{{ day.date }}</td>
                         <td>{{ day.temp }}</td>
@@ -43,19 +43,17 @@
                 </table>
             </div>
 
-            <!-- Packing Recommendations (Top Right) -->
+            <!-- Packing Recommendations -->
             <div class="packing-advice grid-item">
                 <h2>Packing Recommendations</h2>
-                <ul>
-                    <li v-for="item in packingAdvice" :key="item">{{ item }}</li>
-                </ul>
+                <ul><li v-for="item in packingAdvice" :key="item">{{ item }}</li></ul>
             </div>
 
-            <!-- Map (Bottom Left) -->
+            <!-- Map Container -->
             <div id="map" class="map-container grid-item" v-if="showMap"></div>
 
-            <!-- Air Quality (Bottom Right) -->
-            <div v-if="airQuality" class="air-quality grid-item">
+            <!-- Air Quality Information -->
+            <div class="air-quality grid-item">
                 <h2>Air Quality</h2>
                 <p>CO: {{ airQuality.co }} µg/m³ </p>
                 <p>PM2.5: {{ airQuality.pm2_5 }} µg/m³</p>
@@ -68,8 +66,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

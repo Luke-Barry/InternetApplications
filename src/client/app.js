@@ -4,16 +4,28 @@ new Vue({
     data: {
         city: '',
         title: '3-day Weather Forecast',
-        forecast: null,
+        forecast: [
+            { date: 'N/A', temp: '--', wind: '--', rain: '--' },
+            { date: 'N/A', temp: '--', wind: '--', rain: '--' },
+            { date: 'N/A', temp: '--', wind: '--', rain: '--' }
+        ],
         errorMessage: '',
         umbrellaAdvice: false,
         weatherType: '',
-        packingAdvice: [], // Changed to an array for bulleted list
-        airQuality: null,
-        airQualityAdvice: '',
+        packingAdvice: ["--"], // Placeholder packing recommendation
+        airQuality: {
+            co: '--',
+            pm2_5: '--',
+            pm10: '--',
+            no2: '--',
+            so2: '--',
+            o3: '--'
+        },
+        airQualityAdvice: 'Air quality data unavailable.',
         map: null,
         marker: null,
-        showMap: false
+        showMap: false,
+        showLandingBackground: true // Show background until city is entered
     },
     methods: {
         async fetchWeather() {
@@ -21,23 +33,22 @@ new Vue({
                 this.errorMessage = 'Please enter a city name.';
                 return;
             }
-    
+
             const url = `http://localhost:3000/api/weather?city=${encodeURIComponent(this.city)}`;
-    
+
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Failed to fetch weather data");
-    
+
                 const data = await response.json();
                 this.processWeatherData(data.forecast);
                 this.title = `3-day Weather Forecast for ${this.city}`;
                 this.showMap = true;
+                this.showLandingBackground = false; // Remove background after search
                 setTimeout(() => this.updateMap(data.coord.lat, data.coord.lon), 0);
-    
+
                 this.errorMessage = '';
                 await this.fetchAirQuality(data.coord.lat, data.coord.lon);
-    
-                // Initialize particle effect based on the updated isSnow state
                 this.initializeRainEffect();
             } catch (error) {
                 console.error("Fetch error:", error);
@@ -97,30 +108,24 @@ new Vue({
                 recommendations.push("Swimming shorts, suncream, and light clothing");
             }
 
-            this.packingAdvice = recommendations; // Store array of items
+            this.packingAdvice = recommendations;
         },
         initializeRainEffect() {
-            const isSnow = this.isSnow; // Use computed isSnow directly
+            const isSnow = this.isSnow;
 
             particlesJS('particles-js', {
-                number: { value: isSnow ? 200 : 300, density: { enable: true, value_area: 800 } },
                 particles: {
-                    color: { value: isSnow ? '#a6dcef' : '#0000ff' }, // Frost blue for snow, solid blue for rain
+                    color: { value: isSnow ? '#a6dcef' : '#0000ff' },
                     shape: { type: 'circle' },
-                    size: {
-                        value: 3,
-                        random: true
-                    },
+                    size: { value: 3, random: true },
                     move: {
                         direction: 'bottom',
-                        speed: isSnow ? 10 : 17.5, // Slower speed for snow
+                        speed: isSnow ? 10 : 17.5,
                         straight: isSnow ? false : true,
-                        random: isSnow ? true : false, // Drifting movement for snow
+                        random: isSnow ? true : false,
                         out_mode: 'out'
                     },
-                    line_linked: {
-                        enable: false
-                    }
+                    line_linked: { enable: false }
                 },
                 interactivity: {
                     detect_on: 'canvas',
@@ -151,7 +156,6 @@ new Vue({
                     attribution: '&copy; OpenStreetMap contributors'
                 }).addTo(this.map);
 
-                // Bind map container dimensions
                 window.addEventListener('resize', () => {
                     this.map.invalidateSize();
                 });
@@ -169,7 +173,6 @@ new Vue({
     },
     watch: {
         isSnow(newVal) {
-            // Re-trigger initializeRainEffect only when isSnow changes
             this.initializeRainEffect();
         }
     },
@@ -187,7 +190,6 @@ new Vue({
             }
         },
         isSnow() {
-            // Automatically updates based on current weatherType and umbrellaAdvice
             return this.weatherType === 'Cold' && this.umbrellaAdvice;
         }
     }
