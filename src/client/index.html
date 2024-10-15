@@ -46,7 +46,9 @@
             <!-- Packing Recommendations (Top Right) -->
             <div class="packing-advice grid-item">
                 <h2>Packing Recommendations</h2>
-                <p>{{ packingAdvice }}</p>
+                <ul>
+                    <li v-for="item in packingAdvice" :key="item">{{ item }}</li>
+                </ul>
             </div>
 
             <!-- Map (Bottom Left) -->

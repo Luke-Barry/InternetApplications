@@ -3,12 +3,12 @@ new Vue({
     el: '#app',
     data: {
         city: '',
-        title: '3-day Weather Forecast', // Initial title
+        title: '3-day Weather Forecast',
         forecast: null,
         errorMessage: '',
         umbrellaAdvice: false,
         weatherType: '',
-        packingAdvice: '',
+        packingAdvice: [], // Changed to an array for bulleted list
         airQuality: null,
         airQualityAdvice: '',
         map: null,
@@ -30,12 +30,15 @@ new Vue({
     
                 const data = await response.json();
                 this.processWeatherData(data.forecast);
-                this.title = `3-day Weather Forecast for ${this.city}`; // Update title on success
+                this.title = `3-day Weather Forecast for ${this.city}`;
                 this.showMap = true;
                 setTimeout(() => this.updateMap(data.coord.lat, data.coord.lon), 0);
     
                 this.errorMessage = '';
                 await this.fetchAirQuality(data.coord.lat, data.coord.lon);
+    
+                // Initialize particle effect based on the updated isSnow state
+                this.initializeRainEffect();
             } catch (error) {
                 console.error("Fetch error:", error);
                 this.errorMessage = 'Could not fetch weather data.';
@@ -76,7 +79,7 @@ new Vue({
 
             if (isRaining) {
                 this.umbrellaAdvice = true;
-                recommendations.push("an umbrella");
+                recommendations.push("Umbrella");
             } else {
                 this.umbrellaAdvice = false;
                 this.clearRainEffect();
@@ -85,22 +88,24 @@ new Vue({
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
             if (avgTemp < 8) {
                 this.weatherType = 'Cold';
-                recommendations.push("a hat and gloves");
+                recommendations.push("Hat and gloves");
             } else if (avgTemp <= 24) {
                 this.weatherType = 'Mild';
-                recommendations.push("comfortable clothing for mild weather");
+                recommendations.push("Comfortable clothing for mild weather");
             } else {
                 this.weatherType = 'Hot';
-                recommendations.push("swimming shorts, suncream, and light clothing");
+                recommendations.push("Swimming shorts, suncream, and light clothing");
             }
 
-            this.packingAdvice = "Pack " + recommendations.join(", ") + ".";
+            this.packingAdvice = recommendations; // Store array of items
         },
         initializeRainEffect() {
+            const isSnow = this.isSnow; // Use computed isSnow directly
+
             particlesJS('particles-js', {
+                number: { value: isSnow ? 200 : 300, density: { enable: true, value_area: 800 } },
                 particles: {
-                    number: { value: 300, density: { enable: true, value_area: 800 } },
-                    color: { value: '#0000FF' },
+                    color: { value: isSnow ? '#a6dcef' : '#0000ff' }, // Frost blue for snow, solid blue for rain
                     shape: { type: 'circle' },
                     size: {
                         value: 3,
@@ -108,8 +113,9 @@ new Vue({
                     },
                     move: {
                         direction: 'bottom',
-                        speed: 17.5,
-                        straight: true,
+                        speed: isSnow ? 10 : 17.5, // Slower speed for snow
+                        straight: isSnow ? false : true,
+                        random: isSnow ? true : false, // Drifting movement for snow
                         out_mode: 'out'
                     },
                     line_linked: {
@@ -162,12 +168,9 @@ new Vue({
         }
     },
     watch: {
-        umbrellaAdvice(newVal) {
-            if (newVal) {
-                this.initializeRainEffect();
-            } else {
-                this.clearRainEffect();
-            }
+        isSnow(newVal) {
+            // Re-trigger initializeRainEffect only when isSnow changes
+            this.initializeRainEffect();
         }
     },
     computed: {
@@ -182,6 +185,10 @@ new Vue({
                 default:
                     return '';
             }
+        },
+        isSnow() {
+            // Automatically updates based on current weatherType and umbrellaAdvice
+            return this.weatherType === 'Cold' && this.umbrellaAdvice;
         }
     }
 });
