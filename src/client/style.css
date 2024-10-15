@@ -23,6 +23,40 @@ html, body {
     z-index: 1;
 }
 
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd; /* Main border for the container */
+    border-radius: 5px;
+    padding: 0;
+    background-color: white;
+}
+
+.search-icon {
+    margin-left: 10px;
+    color: #888;
+    font-size: 1.2em;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+input {
+    border: none !important; /* Ensure no input border */
+    outline: none !important; /* Ensure no outline */
+    box-shadow: none !important; /* Remove any default shadow */
+    padding-left: 10px; /* Space between icon and input text */
+    flex-grow: 1; /* Expands to fill available space */
+    font-size: 16px;
+    height: 40px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    background-color: transparent; /* Blend with container background */
+}
+
 #app {
     position: relative;
     display: flex;
@@ -129,34 +163,53 @@ html, body {
     grid-area: air-quality;
 }
 
-/* Responsive button and input */
-input, button {
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-family: 'Roboto', sans-serif;
-}
+/* Responsive button */
+/* style.css */
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+/* Common button styling */
+.dynamic-button {
     cursor: pointer;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 15px 25px; /* Increased size */
+    font-size: 18px;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
-button:hover {
-    background-color: #45a049;
+.dynamic-button:hover {
     transform: translateY(-2px);
 }
 
-button:active {
-    background-color: #3e8e41;
+.dynamic-button:active {
     transform: translateY(0);
+}
+
+/* Default button styling (black and white) */
+.default-button.dynamic-button {
+    background-color: #a7a7a7; /* Dark gray background */
+    color: black; /* Medium gray text */
+    border: 2px solid black;
+}
+
+/* Dynamic colors for cold weather */
+.cold-weather.dynamic-button {
+    background-color: #92c8fe; /* Light shade for background */
+    color: #2b5a91; /* Medium-dark shade for text */
+    border: 2px solid #2b5a91; /* Darkest shade for border */
+}
+
+/* Dynamic colors for mild weather */
+.mild-weather.dynamic-button {
+    background-color: #fcd7a2; /* Light shade for background */
+    color: #cc7a3b; /* Medium-dark shade for text */
+    border: 2px solid #cc7a3b; /* Darkest shade for border */
+}
+
+/* Dynamic colors for hot weather */
+.hot-weather.dynamic-button {
+    background-color: #ffc2aa; /* Light shade for background */
+    color: #b9563a; /* Medium-dark shade for text */
+    border: 2px solid #b9563a; /* Darkest shade for border */
 }
 
 /* Styling the forecast table */

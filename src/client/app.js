@@ -3,6 +3,7 @@ new Vue({
     el: '#app',
     data: {
         city: '',
+        title: '3-day Weather Forecast', // Initial title
         forecast: null,
         errorMessage: '',
         umbrellaAdvice: false,
@@ -20,18 +21,19 @@ new Vue({
                 this.errorMessage = 'Please enter a city name.';
                 return;
             }
-
+    
             const url = `http://localhost:3000/api/weather?city=${encodeURIComponent(this.city)}`;
-
+    
             try {
-                const response = await fetch(url, { method: 'GET' });
+                const response = await fetch(url);
                 if (!response.ok) throw new Error("Failed to fetch weather data");
-
+    
                 const data = await response.json();
                 this.processWeatherData(data.forecast);
+                this.title = `3-day Weather Forecast for ${this.city}`; // Update title on success
                 this.showMap = true;
                 setTimeout(() => this.updateMap(data.coord.lat, data.coord.lon), 0);
-
+    
                 this.errorMessage = '';
                 await this.fetchAirQuality(data.coord.lat, data.coord.lon);
             } catch (error) {
@@ -98,7 +100,7 @@ new Vue({
             particlesJS('particles-js', {
                 particles: {
                     number: { value: 300, density: { enable: true, value_area: 800 } },
-                    color: { value: '#0099ff' },
+                    color: { value: '#0000FF' },
                     shape: { type: 'circle' },
                     size: {
                         value: 3,
@@ -106,9 +108,8 @@ new Vue({
                     },
                     move: {
                         direction: 'bottom',
-                        speed: 10,
-                        straight: false,
-                        random: true,
+                        speed: 17.5,
+                        straight: true,
                         out_mode: 'out'
                     },
                     line_linked: {
