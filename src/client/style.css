@@ -5,11 +5,11 @@
 
 /* Basic setup */
 html, body {
+    overflow-y: auto;
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     font-family: 'Roboto', sans-serif; /* Apply the Roboto font throughout */
 }
 
@@ -23,14 +23,61 @@ html, body {
     z-index: 1;
 }
 
-.spiral-background {
-    background: conic-gradient(from 90deg, #4a90e2, #ffe29f, #ff7e5f, #4a90e2);
+/* Morphing background with synchronized darker border and button colors */
+.landing-background {
     height: 100vh;
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -10; /* Ensures it’s behind the main content */
+    z-index: -10;
+    background: linear-gradient(45deg, #4a90e2, #ffd08c, #ff9e76, #4a90e2); /* Initial gradient */
+    background-size: 400% 400%;
+    animation: morphColors 20s ease infinite; /* Single animation for both background and borders */
+}
+
+/* Single keyframes animation for both background and border colors */
+@keyframes morphColors {
+    0%, 100% {
+        background: #4a90e2;  /* Cold (Blue) */
+        border-color: #3a6baf; /* Darker blue for borders */
+    }
+    25% {
+        background: #ffd08c;  /* Mild (Yellow) */
+        border-color: #d69c55; /* Darker yellow for borders */
+    }
+    50% {
+        background: #ff9e76;  /* Hot (Orange) */
+        border-color: #e06b49; /* Darker orange for borders */
+    }
+    75% {
+        background: #ffe29f; /* Blended warm yellow-orange */
+        border-color: #cc8c5b; /* Darker warm blend for borders */
+    }
+}
+
+/* Apply synchronized border color to quadrants */
+.landing-background .grid-item {
+    animation: morphColors 20s ease infinite; /* Sync with background animation */
+    border-width: 2px;
+    border-style: solid;
+}
+
+/* Apply synchronized color to button background */
+.landing-background .dynamic-button {
+    animation: morphColors 20s ease infinite;
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle overlay for matching effect */
+    color: #333; /* Consistent text color */
+    transition: background-color 0.5s ease; /* Smooth transition */
+}
+
+/* Button hover and active states for additional effect */
+.landing-background .dynamic-button:hover {
+    background-color: rgba(0, 0, 0, 0.15); /* Slightly darker on hover */
+}
+
+.landing-background .dynamic-button:active {
+    background-color: rgba(0, 0, 0, 0.2); /* Darkest on active */
 }
 
 #app {
@@ -38,9 +85,10 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100vw;
     height: 100vh;
+    overflow-y: auto;
     text-align: center;
     transition: background 0.5s ease;
     z-index: 2; /* Ensure #app is in front of background */
@@ -125,6 +173,7 @@ input {
         "map air-quality";
     box-sizing: border-box;
     z-index: 2; /* Ensure grid-container is above background */
+    padding-bottom: 20px;
 }
 
 /* Grid Items */
@@ -176,6 +225,7 @@ input {
 /* Air Quality Section */
 .air-quality {
     grid-area: air-quality;
+    justify-content: flex-start;
 }
 
 /* Responsive button */
@@ -217,14 +267,14 @@ input {
 /* Dynamic colors for mild weather */
 .mild-weather.dynamic-button {
     background-color: #fcd7a2; /* Light shade for background */
-    color: #cc7a3b; /* Medium-dark shade for text */
+    color: #9b6132; /* Medium-dark shade for text */
     border: 2px solid #cc7a3b; /* Darkest shade for border */
 }
 
 /* Dynamic colors for hot weather */
 .hot-weather.dynamic-button {
     background-color: #ffc2aa; /* Light shade for background */
-    color: #b9563a; /* Medium-dark shade for text */
+    color: #bf3131; /* Medium-dark shade for text */
     border: 2px solid #b9563a; /* Darkest shade for border */
 }
 
@@ -246,24 +296,40 @@ th, td {
     margin-top: 10px;
 }
 
-/* Responsive Adjustments */
+/* Responsive Stacking Layout for Small Screens */
 @media (max-width: 768px) {
     .grid-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(4, auto);
-        gap: 5px;
-        height: auto;
+        display: flex;
+        flex-direction: column; /* Stack quadrants vertically */
         width: 95%;
+        gap: 10px;
+        height: auto;
     }
 
     .grid-item {
-        flex-direction: column;
-        align-items: center;
+        padding-top: 30px;
+        width: 100%;
+        height: 300px;
     }
 
     #map {
         width: 100%;
-        height: 200px;
+        height: 300px; /* Maintain a reasonable height for the map */
+    }
+}
+
+/* Revert to quadrant layout on larger screens */
+@media (min-width: 769px) {
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        width: 90%;
+        height: 75vh;
+        grid-template-areas:
+            "weather packing"
+            "map air-quality";
     }
 }
 

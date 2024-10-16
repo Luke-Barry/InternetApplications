@@ -13,7 +13,7 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-    <div id="app" :class="[weatherClass, showLandingBackground ? 'spiral-background' : '']">
+    <div id="app" :class="[weatherClass, showLandingBackground ? 'landing-background' : '']">
         <!-- Particle effect only visible during rain/snow -->
         <div id="particles-js" v-if="umbrellaAdvice"></div>
 

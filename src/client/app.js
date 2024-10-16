@@ -24,7 +24,7 @@ new Vue({
         airQualityAdvice: 'Air quality data unavailable.',
         map: null,
         marker: null,
-        showMap: false,
+        showMap: true,
         showLandingBackground: true // Show background until city is entered
     },
     methods: {
@@ -51,8 +51,7 @@ new Vue({
                 await this.fetchAirQuality(data.coord.lat, data.coord.lon);
                 this.initializeRainEffect();
             } catch (error) {
-                console.error("Fetch error:", error);
-                this.errorMessage = 'Could not fetch weather data.';
+                console.error("error:", error);
             }
         },
         async fetchAirQuality(lat, lon) {
@@ -147,8 +146,8 @@ new Vue({
         updateMap(lat, lon) {
             if (!this.map) {
                 this.map = L.map('map', {
-                    center: [lat, lon],
-                    zoom: 10,
+                    center: [20, 0], // Default center for global view
+                    zoom: this.showLandingBackground ? 2 : 10, // Zoomed out for global view initially
                     maxBoundsViscosity: 1.0,
                 });
 
@@ -162,15 +161,23 @@ new Vue({
                 });
             }
 
-            if (this.marker) {
-                this.marker.setLatLng([lat, lon]);
+            if (!this.showLandingBackground) {
+                // Center on the specified location after search
+                if (this.marker) {
+                    this.marker.setLatLng([lat, lon]);
+                } else {
+                    this.marker = L.marker([lat, lon]).addTo(this.map);
+                }
+                this.map.setView([lat, lon], 10);
             } else {
-                this.marker = L.marker([lat, lon]).addTo(this.map);
+                this.map.setView([20, 0], 2); // Reset view when in landing state
             }
-
-            this.map.setView([lat, lon], 10);
             this.map.invalidateSize();
         }
+    },
+    mounted() {
+        // Initialize map with a default global view
+        this.updateMap(20, 0); 
     },
     watch: {
         isSnow(newVal) {
