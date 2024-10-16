@@ -5,7 +5,9 @@ const axios = require('axios');
 const { OPENWEATHER_API_KEY } = require('./config/apiKeys');
 const app = express();
 const PORT = 3000;
+const cors = require('cors');
 
+app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
