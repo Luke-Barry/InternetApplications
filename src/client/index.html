@@ -21,7 +21,7 @@
         <h1>{{ title }}</h1>
         <div class="search-container">
             <i class="fas fa-search search-icon"></i>
-            <input v-model="city" placeholder="Enter your desired city" @keyup.enter="fetchWeather">
+            <input v-model="city" placeholder="Enter your desired travel destination" @keyup.enter="fetchWeather">
         </div>              
         <button @click="fetchWeather" :class="[weatherClass || 'default-button', 'dynamic-button']">Get Weather</button>
 
@@ -55,12 +55,41 @@
             <!-- Air Quality Information -->
             <div class="air-quality grid-item">
                 <h2>Air Quality</h2>
-                <p>CO: {{ airQuality.co }} µg/m³ </p>
-                <p>PM2.5: {{ airQuality.pm2_5 }} µg/m³</p>
-                <p>PM10: {{ airQuality.pm10 }} µg/m³</p>
-                <p>NO₂: {{ airQuality.no2 }} µg/m³</p>
-                <p>SO₂: {{ airQuality.so2 }} µg/m³</p>
-                <p>O₃: {{ airQuality.o3 }} µg/m³</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pollutant</th>
+                            <th>Concentration (µg/m³)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CO</td>
+                            <td>{{ airQuality.co }}</td>
+                        </tr>
+                        <tr>
+                            <td>PM2.5</td>
+                            <td>{{ airQuality.pm2_5 }}</td>
+                        </tr>
+                        <tr>
+                            <td>PM10</td>
+                            <td>{{ airQuality.pm10 }}</td>
+                        </tr>
+                        <tr>
+                            <td>NO₂</td>
+                            <td>{{ airQuality.no2 }}</td>
+                        </tr>
+                        <tr>
+                            <td>SO₂</td>
+                            <td>{{ airQuality.so2 }}</td>
+                        </tr>
+                        <tr>
+                            <td>O₃</td>
+                            <td>{{ airQuality.o3 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Air quality warnings listed below the table -->
                 <p class="air-quality-advice">{{ airQualityAdvice }}</p>
             </div>
         </div>

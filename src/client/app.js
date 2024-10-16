@@ -74,12 +74,12 @@ new Vue({
             const { co, pm2_5, pm10, no2, so2, o3 } = this.airQuality;
             let advice = [];
 
-            if (co > 1000) advice.push("Elevated CO levels: avoid poorly ventilated areas.");
-            if (pm2_5 > 35) advice.push("High PM2.5 levels: limit outdoor activities.");
-            if (pm10 > 50) advice.push("High PM10 levels: avoid outdoor activities for sensitive groups.");
-            if (no2 > 100) advice.push("High NO₂ levels: limit physical activities outside.");
-            if (so2 > 20) advice.push("High SO₂ levels: limit exposure if you have respiratory issues.");
-            if (o3 > 180) advice.push("High ozone levels: avoid prolonged sun exposure.");
+            if (co > 5000) advice.push("Elevated CO levels: avoid poorly ventilated areas. Limit outdoor exposure to 1 hour.");
+            if (pm2_5 > 41) advice.push("High PM2.5 levels: limit outdoor activities.");
+            if (pm10 > 58) advice.push("High PM10 levels: avoid outdoor activities for sensitive groups.");
+            if (no2 > 267) advice.push("High NO₂ levels: limit physical activities outside.");
+            if (so2 > 354) advice.push("High SO₂ levels: limit exposure if you have respiratory issues.");
+            if (o3 > 120) advice.push("High ozone levels: avoid prolonged sun exposure.");
 
             this.airQualityAdvice = advice.length ? advice.join(" ") : "Air quality is good. No precautions necessary.";
         },
@@ -87,7 +87,7 @@ new Vue({
             this.forecast = forecastData;
             const isRaining = this.forecast.some(day => day.rain > 0);
             const recommendations = [];
-
+        
             if (isRaining) {
                 this.umbrellaAdvice = true;
                 recommendations.push("Umbrella");
@@ -95,21 +95,22 @@ new Vue({
                 this.umbrellaAdvice = false;
                 this.clearRainEffect();
             }
-
+        
             const avgTemp = this.forecast.reduce((sum, day) => sum + day.temp, 0) / this.forecast.length;
             if (avgTemp < 8) {
                 this.weatherType = 'Cold';
-                recommendations.push("Hat and gloves");
+                recommendations.push("Warm jacket", "Hat", "Gloves", "Scarf", "Thermal socks", "Boots");
             } else if (avgTemp <= 24) {
                 this.weatherType = 'Mild';
-                recommendations.push("Comfortable clothing for mild weather");
+                recommendations.push("Comfortable shirt", "T-shirts", "Pants", "Light scarf", "Closed shoes");
             } else {
                 this.weatherType = 'Hot';
-                recommendations.push("Swimming shorts, suncream, and light clothing");
+                recommendations.push("Shorts", "T-shirts", "Sunglasses", "Sun hat", "Sunscreen", "Sandals");
             }
-
+        
             this.packingAdvice = recommendations;
-        },
+        }
+        ,
         initializeRainEffect() {
             const isSnow = this.isSnow;
 

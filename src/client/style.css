@@ -266,3 +266,46 @@ th, td {
         height: 200px;
     }
 }
+
+/* Air Quality and Forecast Table Styling */
+.air-quality table, .weather-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* Header row color based on weather type */
+.cold-weather .air-quality th, .cold-weather .weather-info th {
+    background-color: #76b3f0; /* Lighter shade for cold-weather */
+}
+
+.mild-weather .air-quality th, .mild-weather .weather-info th {
+    background-color: #ffd08c; /* Lighter shade for mild-weather */
+}
+
+.hot-weather .air-quality th, .hot-weather .weather-info th {
+    background-color: #ff9e76; /* Lighter shade for hot-weather */
+}
+
+/* Table cell border color matching quadrant borders */
+.cold-weather .air-quality td, .cold-weather .air-quality th, 
+.cold-weather .weather-info td, .cold-weather .weather-info th {
+    border: 1px solid #3a7bc2; /* Darker shade for cold-weather */
+}
+
+.mild-weather .air-quality td, .mild-weather .air-quality th, 
+.mild-weather .weather-info td, .mild-weather .weather-info th {
+    border: 1px solid #e6a85c; /* Darker shade for mild-weather */
+}
+
+.hot-weather .air-quality td, .hot-weather .air-quality th, 
+.hot-weather .weather-info td, .hot-weather .weather-info th {
+    border: 1px solid #e6714f; /* Darker shade for hot-weather */
+}
+
+/* General cell padding and alignment */
+.air-quality th, .air-quality td, .weather-info th, .weather-info td {
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+}
