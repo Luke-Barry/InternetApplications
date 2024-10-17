@@ -1,3 +1,3 @@
 module.exports = {
-    OPENWEATHER_API_KEY: '384175897f1189254d5436e1e11d3381'
+    OPENWEATHER_API_KEY: ''
 };
